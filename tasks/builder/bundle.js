@@ -16,7 +16,11 @@ import path from "node:path";
 /**
  * @param {string} entryPath - путь к entry бандлинга
  */
-export function bundle(entryPath) {}
+export function bundle(entryPath) {
+  const file = fs.readFileSync(path.resolve(entryPath), 'utf8');
+  const requireCalls = searchRequireCalls(file);
+  console.log(file, requireCalls)
+}
 
 /**
  * Функция для поиска в файле вызовов require
