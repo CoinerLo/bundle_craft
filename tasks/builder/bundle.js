@@ -19,7 +19,11 @@ import path from "node:path";
 export function bundle(entryPath) {
   const file = fs.readFileSync(path.resolve(entryPath), 'utf8');
   const requireCalls = searchRequireCalls(file);
-  console.log(file, requireCalls)
+  console.log(entryPath, file, requireCalls)
+  const nextFile = fs.readFileSync(path.resolve(path.dirname(entryPath), requireCalls[0], ), 'utf8');
+  console.log(nextFile)
+  const fileWithRuntime = '(()=>{\n' + file + '})()';
+  return fileWithRuntime;
 }
 
 /**
