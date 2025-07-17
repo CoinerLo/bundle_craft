@@ -17,13 +17,30 @@ import path from "node:path";
  * @param {string} entryPath - путь к entry бандлинга
  */
 export function bundle(entryPath) {
+  const filesData = [];
   const file = fs.readFileSync(path.resolve(entryPath), 'utf8');
-  const requireCalls = searchRequireCalls(file);
-  console.log(entryPath, file, requireCalls)
-  const nextFile = fs.readFileSync(path.resolve(path.dirname(entryPath), requireCalls[0], ), 'utf8');
-  console.log(nextFile)
-  const fileWithRuntime = '(()=>{\n' + file + '})()';
-  return fileWithRuntime;
+  filesData.push(file);
+  const pathList = searchRequireCalls(file);
+  const getData = () => {
+    if (pathList.length) {
+      const nextFilePath = pathList.pop();
+      const nextDirPath = path.dirname(entryPath);
+      console.log(nextFilePath, nextDirPath)
+      const nextFile = fs.readFileSync(path.resolve(nextDirPath, nextFilePath), 'utf8');
+      filesData.push(nextFile);
+
+      const nextPathList = searchRequireCalls(file);
+      if (nextPathList.length) {
+        pathList.push(...nextPathList);
+      }
+      getData();
+    }
+  }
+  // console.log(entryPath, file, requireCalls)
+  getData();
+  // console.log(nextFile)
+  // const fileWithRuntime = '(()=>{\n' + file + '})()';
+  return file.concat('\n');
 }
 
 /**
