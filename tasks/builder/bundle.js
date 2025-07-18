@@ -29,17 +29,16 @@ export function bundle(entryPath) {
       const nextFile = fs.readFileSync(path.resolve(nextDirPath, nextFilePath), 'utf8');
       filesData.push(nextFile);
 
-      const nextPathList = searchRequireCalls(file);
+      const nextPathList = searchRequireCalls(nextFile);
       if (nextPathList.length) {
         pathList.push(...nextPathList);
       }
       getData();
     }
   }
-  // console.log(entryPath, file, requireCalls)
+
   getData();
-  // console.log(nextFile)
-  // const fileWithRuntime = '(()=>{\n' + file + '})()';
+  console.log(filesData)
   return file.concat('\n');
 }
 
