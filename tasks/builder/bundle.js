@@ -17,46 +17,37 @@ import path from "node:path";
  * @param {string} entryPath - путь к entry бандлинга
  */
 export function bundle(entryPath) {
-  const Global_Exports = {};
-  const filesData = [];
-  const file = fs.readFileSync(path.resolve(entryPath), 'utf8');
-  Global_Exports[entryPath] = file;
-  filesData.push(file);
-  const pathList = searchRequireCalls(file);
+  const modules = {};
+  modules[entryPath] = fs.readFileSync(path.resolve(entryPath), 'utf8');
+  const pathList = searchRequireCalls(modules[entryPath]);
+
   const getData = () => {
     if (pathList.length) {
       const nextFilePath = pathList.pop();
       const nextDirPath = path.dirname(entryPath);
       const nextFile = fs.readFileSync(path.resolve(nextDirPath, nextFilePath), 'utf8');
-      filesData.push(nextFile);
-      Global_Exports[nextFilePath] = nextFile;
+
+      modules[nextFilePath] = nextFile;
 
       const nextPathList = searchRequireCalls(nextFile);
-      if (nextPathList.length) {
-        pathList.push(...nextPathList);
-      }
+      pathList.push(...nextPathList);
       getData();
     }
   }
 
   getData();
 
-  const getRuntime = (data) => data.map((item) => {
-    return `
-  (function a(){
-    ${item.trim()}
-  })();`;
-  });
-  const allData = getRuntime(filesData).join('');
-  const prepareGlobalExports = Object.entries(Global_Exports).map(([key, val]) => `'${key}': () => {${val.replace('module.exports =', 'return')}}`)
-  const result = `var Global_Exports ={ ${prepareGlobalExports.join(',')} };
-if (typeof require === 'function') {
-  ${allData}
-} else {
-  var require = (arg) => {const result = Global_Exports[arg]();return result};
-  var module = { exports: {} };
-  ${allData}
-}`
+  const result = `
+var modules = {\n${Object.entries(modules).map(([key, val]) => `\t'${key}': new Function('module', 'require', \`\n${val}\`)`).join(',\n')}};
+function __require__(moduleId) {
+  var module = {
+    exports: {}
+  };
+
+  modules[moduleId](module, __require__);
+  return module.exports;
+}
+__require__('${entryPath}');`
 
   return result;
 }
