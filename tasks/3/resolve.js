@@ -28,13 +28,16 @@ const checkFileWithExtends = (path) => {
 }
 
 export function resolve(importPath, parentPath) {
+  let result = null;
   const startPath = importPath.slice(0, 2);
   if (startPath === '..') {
     const nextDirPath = path.dirname(parentPath);
     const newPath = path.resolve(nextDirPath, importPath);
-    return checkFileWithExtends(newPath);
-  } else if (startPath === '.') {
-    
+    result = checkFileWithExtends(newPath);
+  } else if (startPath === './') {
+    const nextDirPath = parentPath ? path.dirname(parentPath) : '';
+    const newPath = rootDir + nextDirPath.slice(1) + importPath.slice(1);
+    result = checkFileWithExtends(newPath);
   } else {
     const keysAlias = Object.entries(imports);
     const isCurrentAlias = keysAlias.find((i) => {
@@ -46,11 +49,11 @@ export function resolve(importPath, parentPath) {
       const i = isCurrentAlias[0].replace('*','');
       const t = isCurrentAlias[1].replace('*','');
       const newPath = rootDir + importPath.replace(i, t).slice(1);
-      return checkFileWithExtends(newPath);
-    } else {
-      return null;
+      result = checkFileWithExtends(newPath);
     }
   }
+
+  return result;
 }
 
 function isFileExists(filePath) {
