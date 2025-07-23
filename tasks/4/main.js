@@ -7,12 +7,13 @@ import { parse } from "acorn";
 const sourceCode = fs.readFileSync('./entry.js', 'utf-8');
 
 // get ast from source code
-const ast = parse(sourceCode, { ecmaVersion: 6 })
-console.log(ast);
+const ast = parse(sourceCode, { ecmaVersion: 6, sourceType: 'module'  })
+
 // transform ast
+const transformedAST = transformer(ast);
 
 // convert ast to source code
-const result = '';
+const result =  astring.generate(transformedAST);
 
 // write source code to file
 fs.writeFileSync("./result.js", result);
