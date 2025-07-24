@@ -1,5 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
+import { resolve } from "../3/resolve.js";
+import { transformer } from "../4/transformer.js";
+import * as astring from "astring";
+import { parse } from "acorn";
 
 /**
  * Примерный алгоритм работы бандлера:
@@ -18,14 +22,15 @@ import path from "node:path";
  */
 export function bundle(entryPath) {
   const modules = {};
-  modules[entryPath] = fs.readFileSync(path.resolve(entryPath), 'utf8');
+  const textModule = fs.readFileSync(resolve(entryPath), 'utf8');
+  modules[entryPath] = useTransformer(textModule);
   const pathList = searchRequireCalls(modules[entryPath]);
 
   const getData = () => {
     if (pathList.length) {
       const nextFilePath = pathList.pop();
-      const nextDirPath = path.dirname(entryPath);
-      const nextFile = fs.readFileSync(path.resolve(nextDirPath, nextFilePath), 'utf8');
+      const textModule = fs.readFileSync(resolve(nextFilePath, entryPath), 'utf8');
+      const nextFile = useTransformer(textModule);
 
       modules[nextFilePath] = nextFile;
 
@@ -61,4 +66,12 @@ function searchRequireCalls(code) {
   return [...code.matchAll(/require\(('|")(.*)('|")\)/g)].map(
     (item) => item[2]
   );
+}
+
+function useTransformer(sourceCode) {
+  const ast = parse(sourceCode, { ecmaVersion: 2020, sourceType: 'module'  })
+
+  const transformedAST = transformer(ast);
+
+  return astring.generate(transformedAST);
 }
