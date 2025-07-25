@@ -21,40 +21,74 @@ import { parse } from "acorn";
  * @param {string} entryPath - путь к entry бандлинга
  */
 export function bundle(entryPath) {
-  const modules = {};
-  const textModule = fs.readFileSync(resolve(entryPath), 'utf8');
-  modules[entryPath] = useTransformer(textModule);
-  const pathList = searchRequireCalls(modules[entryPath]);
+  const entryContent = fs.readFileSync(entryPath, 'utf-8');
+  const requireCalls = searchRequireCalls(entryContent).map((modulePath) => ({
+    modulePath,
+    parent: entryPath,
+  }));
 
-  const getData = () => {
-    if (pathList.length) {
-      const nextFilePath = pathList.pop();
-      const textModule = fs.readFileSync(resolve(nextFilePath, entryPath), 'utf8');
-      const nextFile = useTransformer(textModule);
+  const modules = [];
+  const header = `const modules = {};
+function require(id) {
+  modules[id](require, modules[id]);
+  return modules[id].exports;
+};`;
 
-      modules[nextFilePath] = nextFile;
+  const entry = `(function(require, module) { ${entryContent} })(require, modules)`;
 
-      const nextPathList = searchRequireCalls(nextFile);
-      pathList.push(...nextPathList);
-      getData();
+  while (requireCalls.length) {
+    const { parent, modulePath } = requireCalls.pop();
+    const resolvedModulePath = resolve(modulePath, parent);
+    const moduleCode = fs.readFileSync(resolvedModulePath, 'utf-8');
+
+    const moduleRequireCalls = searchRequireCalls(moduleCode);
+    if (moduleRequireCalls.length) {
+      requireCalls.push(...moduleRequireCalls.map((modulePath) => ({
+        modulePath,
+        parent,
+      })));
     }
+
+    modules.push(`modules['${modulePath}'] = function(require, module) { ${moduleCode} };`);
   }
 
-  getData();
+  return useTransformer(`${header}\n${modules.join('\n')}\n${entry}`);
 
-  const result = `
-var modules = {\n${Object.entries(modules).map(([key, val]) => `\t'${key}': new Function('module', 'require', \`\n${val}\`)`).join(',\n')}};
-function __require__(moduleId) {
-  var module = {
-    exports: {}
-  };
 
-  modules[moduleId](module, __require__);
-  return module.exports;
-}
-__require__('${entryPath}');`
+//   const modules = {};
+//   const textModule = fs.readFileSync(resolve(entryPath), 'utf8');
+//   modules[entryPath] = useTransformer(textModule);
+//   const pathList = searchRequireCalls(modules[entryPath]);
 
-  return result;
+//   const getData = () => {
+//     if (pathList.length) {
+//       const nextFilePath = pathList.pop();
+//       const textModule = fs.readFileSync(resolve(nextFilePath, entryPath), 'utf8');
+//       const nextFile = useTransformer(textModule);
+
+//       modules[nextFilePath] = nextFile;
+
+//       const nextPathList = searchRequireCalls(nextFile);
+//       pathList.push(...nextPathList);
+//       getData();
+//     }
+//   }
+
+//   getData();
+
+//   const result = `
+// var modules = {\n${Object.entries(modules).map(([key, val]) => `\t'${key}': new Function('module', 'require', \`\n${val}\`)`).join(',\n')}};
+// function __require__(moduleId) {
+//   var module = {
+//     exports: {}
+//   };
+
+//   modules[moduleId](module, __require__);
+//   return module.exports;
+// }
+// __require__('${entryPath}');`
+
+//   return result;
 }
 
 /**
