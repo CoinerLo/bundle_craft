@@ -19,7 +19,7 @@ const options = {
     outdir: 'dist/esbuild',
     bundle: true,
     entryPoints: ['./src/index.tsx'],
-    publicPath: '/webpack/',
+    publicPath: '/esbuild/',
     resolveExtensions: ['.ts', '.js', '.tsx', '.jsx', '.json'],
     alias: {
         "components/*": "./src/components/*",
