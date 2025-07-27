@@ -17,6 +17,7 @@ const config: Configuration = {
     entry: "./src/index.tsx",
     output: {
         path: path.resolve("./dist/webpack"),
+        publicPath: '/webpack/',
     },
     devtool: false,
     mode: isProduction ? "production" : "development",
