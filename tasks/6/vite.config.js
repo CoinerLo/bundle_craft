@@ -4,18 +4,14 @@ export default defineConfig({
     base: '/vite/',
     build: {
         minify: false,
-        lib: {
-            entry: {
-                entry: './src/entry.js',
-                performance: './src/performance.js'
-            },
-            formats: ['es'],
-        },
         outDir: 'dist/vite',
         rollupOptions: {
+            input: {
+                entry: "./src/entry.js",
+                performance: './src/performance.js',
+            },
             output: {
                 entryFileNames: '[name].js',
-                format: "esm",
             },
         }
     },
