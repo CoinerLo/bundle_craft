@@ -5,7 +5,6 @@ export default {
     },
     output: {
         dir: "dist/rollup",
-        format: "esm",
         assetFileNames: "[name][extname]",
     },
 };
