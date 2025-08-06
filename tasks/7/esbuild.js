@@ -9,6 +9,9 @@ const options = {
   outdir: "dist/esbuild",
   assetNames: 'assets/[name]',
   publicPath: 'http://localhost:3000/esbuild/',
+    loader: {
+    '.ejs': 'text',
+  },
   plugins: [
     htmlPlugin({
       files: [
@@ -31,6 +34,19 @@ const options = {
           `,
         },
       ],
+    }),
+    inlineImage({
+      limit: ({ path }) => {
+        return path.endsWith(".inline.svg");
+      }
+    }),
+    inlineImage({
+      limit: 1024,
+      extensions: ["svg"]
+    }),
+    inlineImage({
+      limit: 0,
+      extensions: ["png"]
     }),
   ],
 };
