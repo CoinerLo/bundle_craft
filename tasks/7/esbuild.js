@@ -1,6 +1,7 @@
 import esbuild from "esbuild";
 import { htmlPlugin } from "@craftamap/esbuild-plugin-html";
 import inlineImage from 'esbuild-plugin-inline-image';
+import fs from "node:fs";
 
 const options = {
   entryPoints: ["./src/index.js"],
@@ -37,12 +38,13 @@ const options = {
     }),
     inlineImage({
       limit: ({ path }) => {
-        return path.endsWith(".inline.svg");
+        if (path.endsWith('.inline.svg')) {
+          return true;
+        }
+
+        const stats = fs.statSync(path);
+        return stats.size <= 3072; // 3 КБ = 3072 байта
       }
-    }),
-    inlineImage({
-      limit: 1024,
-      extensions: ["svg"]
     }),
     inlineImage({
       limit: 0,
