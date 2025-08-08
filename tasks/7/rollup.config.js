@@ -10,6 +10,21 @@ export default {
     assetFileNames: "[name][extname]",
   },
   plugins: [
+    string({
+      include: ['**/*.ejs', '**/*.json'],
+    }),
+    url({
+      include: [
+        /\.(svg|png)$/
+      ],
+      limit: (fileInfo) => {
+        const { name, size } = fileInfo;
+        if (name.endsWith('.inline.svg')) {
+          return Infinity;
+        }
+        return 3072;
+      },
+    }),
     html({
       template: ({ files, title }) => {
         const scripts = (files.js || [])
