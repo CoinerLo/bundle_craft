@@ -12,6 +12,7 @@ const options = {
   publicPath: 'http://localhost:3000/esbuild/',
     loader: {
     '.ejs': 'text',
+    '.json': 'text',
   },
   plugins: [
     htmlPlugin({
