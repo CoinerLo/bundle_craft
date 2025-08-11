@@ -14,16 +14,26 @@ export default {
       include: ['**/*.ejs', '**/*.json'],
     }),
     url({
+      publicPath: 'http://localhost:3000/rollup/',
       include: [
         /\.(svg|png)$/
       ],
-      limit: (fileInfo) => {
-        const { name, size } = fileInfo;
-        if (name.endsWith('.inline.svg')) {
-          return Infinity;
-        }
-        return 3072;
-      },
+      exclude: /\.inline\.svg$/,
+      limit: 3072,
+      fileName: 'assets/[name][extname]',
+      // limit: (fileInfo) => {
+      //   const { name, size } = fileInfo;
+      //   if (name.endsWith('.inline.')) {
+      //     return Infinity;
+      //   }
+      //   return 3072;
+      // },
+    }),
+    url({
+      include: [
+        /\.inline\.svg$/,
+      ],
+      limit: Infinity,
     }),
     html({
       template: ({ files, title }) => {
