@@ -12,7 +12,15 @@ const config = {
   },
   experiments: {
     outputModule: true
-  }
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(yaml|yml)$/,
+        loader: path.resolve('./plugins/yaml-loader.js'),
+      }
+    ],
+  },
 };
 
 export default config;
