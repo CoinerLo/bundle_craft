@@ -4,6 +4,7 @@ import { resolve } from "../3/resolve.js";
 import { transformer } from "../4/transformer.js";
 import * as astring from "astring";
 import { parse } from "acorn";
+import PluginJson from './plugins/PluginJson.js';
 
 /**
  * Примерный алгоритм работы бандлера:
@@ -39,8 +40,12 @@ function require(id) {
   while (requireCalls.length) {
     const { parent, modulePath } = requireCalls.pop();
     const resolvedModulePath = resolve(modulePath, parent);
-    const moduleCode = fs.readFileSync(resolvedModulePath, 'utf-8');
+    let moduleCode = fs.readFileSync(resolvedModulePath, 'utf-8');
 
+    if (resolvedModulePath.endsWith('.json')) {
+      moduleCode = PluginJson(moduleCode);
+    }
+    console.log(moduleCode)
     const moduleRequireCalls = searchRequireCalls(moduleCode);
     if (moduleRequireCalls.length) {
       requireCalls.push(...moduleRequireCalls.map((modulePath) => ({
