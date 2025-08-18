@@ -20,4 +20,5 @@ export default function watch() {
         fs.writeFileSync(`./dist/main.js`, newOutput);
     });
 }
+
 watch();

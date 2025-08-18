@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import path from "node:path";
 import { resolve } from "../3/resolve.js";
 import { transformer } from "../4/transformer.js";
 import * as astring from "astring";
@@ -45,7 +44,7 @@ function require(id) {
     if (resolvedModulePath.endsWith('.json')) {
       moduleCode = PluginJson(moduleCode);
     }
-    console.log(moduleCode)
+
     const moduleRequireCalls = searchRequireCalls(moduleCode);
     if (moduleRequireCalls.length) {
       requireCalls.push(...moduleRequireCalls.map((modulePath) => ({
@@ -58,42 +57,6 @@ function require(id) {
   }
 
   return useTransformer(`${header}\n${modules.join('\n')}\n${entry}`);
-
-
-//   const modules = {};
-//   const textModule = fs.readFileSync(resolve(entryPath), 'utf8');
-//   modules[entryPath] = useTransformer(textModule);
-//   const pathList = searchRequireCalls(modules[entryPath]);
-
-//   const getData = () => {
-//     if (pathList.length) {
-//       const nextFilePath = pathList.pop();
-//       const textModule = fs.readFileSync(resolve(nextFilePath, entryPath), 'utf8');
-//       const nextFile = useTransformer(textModule);
-
-//       modules[nextFilePath] = nextFile;
-
-//       const nextPathList = searchRequireCalls(nextFile);
-//       pathList.push(...nextPathList);
-//       getData();
-//     }
-//   }
-
-//   getData();
-
-//   const result = `
-// var modules = {\n${Object.entries(modules).map(([key, val]) => `\t'${key}': new Function('module', 'require', \`\n${val}\`)`).join(',\n')}};
-// function __require__(moduleId) {
-//   var module = {
-//     exports: {}
-//   };
-
-//   modules[moduleId](module, __require__);
-//   return module.exports;
-// }
-// __require__('${entryPath}');`
-
-//   return result;
 }
 
 /**
