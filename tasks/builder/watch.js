@@ -10,8 +10,6 @@ const output = bundle(process.argv[2]);
 fs.mkdirSync("./dist", { recursive: true });
 fs.writeFileSync(`./dist/main.js`, output);
 
-// Реализуйте watch здесь
-
 export default function watch() {
     const dir = path.dirname(entryPath);
     console.log('Start watch');
