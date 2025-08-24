@@ -12,12 +12,15 @@ const config = {
     topLevelAwait: true,
   },
   output: {
-    publicPath: '/webpack/',
-    path: path.resolve(import.meta.dirname, 'dist/webpack'),
+    publicPath: "/webpack/",
+    path: path.resolve(import.meta.dirname, "dist/webpack"),
+    environment: {
+      module: true,
+    }
   },
   resolve: {
     plugins: [new TsconfigPathsPlugin()],
-    extensions: ['.ts', '.tsx', '.js', '.json'],
+    extensions: [".ts", ".tsx", ".js", ".json"],
     fallback: {
       assert: false,
       buffer: false,
@@ -47,7 +50,7 @@ const config = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './template.html',
+      template: "./template.html",
     }),
     new rsdoctor.RsdoctorWebpackPlugin(),
   ],
@@ -57,36 +60,32 @@ const config = {
         test: /\.(j|t)sx?$/,
         exclude: /node_modules/,
         use: {
-            loader: "swc-loader",
-            options: {
-                "jsc": {
-                    "parser": {
-                    "syntax": "typescript",
-                    "tsx": true
-                    },
-                    "transform": {
-                    "react": {
-                        "runtime": "automatic"
-                    }
-                    }
+          loader: "swc-loader",
+          options: {
+            jsc: {
+              parser: {
+                syntax: "typescript",
+                tsx: true,
+              },
+              transform: {
+                react: {
+                  runtime: "automatic",
                 },
-                "module": {
-                    "type": "commonjs"
-                }
-            }
+              },
+            },
+          }
         },
       },
-      // { test: /\.(html)$/, use: ['html-webpack-plugin'] },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
-        type: 'asset/resource',
+        type: "asset/resource",
         generator: {
-          filename: 'assets/fonts/[name].[hash:8][ext]',
+          filename: "assets/fonts/[name].[hash:8][ext]",
         },
       },
       {
         test: /\.(svg|png)$/,
-        type: 'asset/resource', // для обычных импортов как URL
+        type: "asset/resource",
       },
     ],
   },
