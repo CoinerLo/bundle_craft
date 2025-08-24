@@ -43,14 +43,14 @@ function require(id) {
 
     if (resolvedModulePath.endsWith('.json')) {
       moduleCode = PluginJson(moduleCode);
-    }
-
-    const moduleRequireCalls = searchRequireCalls(moduleCode);
-    if (moduleRequireCalls.length) {
-      requireCalls.push(...moduleRequireCalls.map((modulePath) => ({
-        modulePath,
-        parent,
-      })));
+    } else {
+      const moduleRequireCalls = searchRequireCalls(moduleCode);
+      if (moduleRequireCalls.length) {
+        requireCalls.push(...moduleRequireCalls.map((modulePath) => ({
+          modulePath,
+          parent,
+        })));
+      }
     }
 
     modules.push(`modules['${modulePath}'] = function(require, module) { ${moduleCode} };`);
