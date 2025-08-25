@@ -29,7 +29,7 @@ const config = {
   module: {
     rules: [
       {
-        resourceQuery: /inline/,
+        resourceQuery: /\.inline\.svg/,
         type: 'asset/inline',
       },
       {
@@ -49,6 +49,10 @@ const config = {
       {
         test: /\.json$/,
         type: 'asset/source',
+      },
+      {
+        test: /.ejs$/,
+        type: 'asset/source'
       },
       {
         resourceQuery: /raw/,
