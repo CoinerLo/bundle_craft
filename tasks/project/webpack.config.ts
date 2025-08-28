@@ -19,7 +19,7 @@ const config: Configuration = {
         path: path.resolve("./dist/webpack"),
         publicPath: '/webpack/',
     },
-    devtool: false,
+    devtool: 'hidden-source-map',
     mode: isProduction ? "production" : "development",
     target: ['web', 'es5'],
     resolve: {

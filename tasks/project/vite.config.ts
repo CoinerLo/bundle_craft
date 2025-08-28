@@ -7,6 +7,7 @@ export default defineConfig({
         minify: false,
         outDir: 'dist/vite',
         assetsDir: '.',
+        sourcemap: "hidden",
     },
     resolve: {
         alias: {
