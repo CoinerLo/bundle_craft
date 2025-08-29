@@ -15,11 +15,13 @@ const htmlTemplate = `
 </html>
 `;
 
-const options = {
+const options: esbuild.BuildOptions = {
     outdir: 'dist/esbuild',
     bundle: true,
     entryPoints: ['./src/index.tsx'],
     publicPath: '/esbuild/',
+    sourcemap: 'external',
+    sourcesContent: false,
     resolveExtensions: ['.ts', '.js', '.tsx', '.jsx', '.json'],
     alias: {
         "components/*": "./src/components/*",
@@ -40,6 +42,6 @@ const options = {
             ]
         }),
     ],
-}
+};
 
 esbuild.build(options).catch(() => process.exit(1))
