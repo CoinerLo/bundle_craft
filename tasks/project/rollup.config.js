@@ -35,6 +35,7 @@ export default {
         dir: "dist/rollup",
         format: "esm",
         assetFileNames: "[name][extname]",
+        sourcemap: 'hidden',
     },
     plugins: [
         nodeResolve({
@@ -43,7 +44,7 @@ export default {
         typescript(),
         commonjs({ transformMixedEsModules: true, extensions: [".js", ".ts", ".tsx", ".jsx", ".json"] }),
         css({
-            output: 'style.css' // имя выходного CSS
+            output: 'style.css', // имя выходного CSS
         }),
         html({
             template: htmlTemplate,
