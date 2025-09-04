@@ -6,6 +6,16 @@
   "author": "",
   "license": "ISC",
   "description": "",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      }
+    }
+  },
   "scripts": {
     "build": "rollup -c",
     "build:types": "api-extractor run"
