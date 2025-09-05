@@ -6,6 +6,10 @@ export default {
     {
       file: 'lib/index.js',
       format: 'es',
+    },
+    {
+      file: 'lib/index.cjs',
+      format: 'cjs',
     }
   ],
   plugins: [

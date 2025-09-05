@@ -9,10 +9,20 @@
   "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "exports": {
+    "./package.json": "./package.json",
+    "./types": "./lib/index.d.ts",
     ".": {
+      "types": "./lib/index.d.ts",
       "import": {
         "types": "./lib/index.d.ts",
         "default": "./lib/index.js"
+      },
+      "require": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.cjs"
+      },
+      "default":{
+        "import": "./lib/index.js"
       }
     }
   },
