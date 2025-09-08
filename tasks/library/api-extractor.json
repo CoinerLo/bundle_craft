@@ -12,24 +12,7 @@
     "enabled": true,
     "publicTrimmedFilePath": "./lib/index.d.ts"
   },
-
   "tsdocMetadata": {
-  },
-  "messages": {
-    "compilerMessageReporting": {
-      "default": {
-        "logLevel": "warning"
-      }
-    },
-    "extractorMessageReporting": {
-      "default": {
-        "logLevel": "warning"
-      }
-    },
-    "tsdocMessageReporting": {
-      "default": {
-        "logLevel": "warning"
-      }
-    }
+    "enabled": true
   }
 }
