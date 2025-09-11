@@ -2,6 +2,7 @@ import { Configuration } from "webpack";
 import path from "node:path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
+import rsdoctor from "@rsdoctor/webpack-plugin";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -62,6 +63,7 @@ const config: Configuration = {
         new HtmlWebpackPlugin({
             templateContent,
         }),
+        new rsdoctor.RsdoctorWebpackMultiplePlugin(),
     ],
     experiments: {
         css: true
