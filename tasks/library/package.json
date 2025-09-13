@@ -9,11 +9,12 @@
   "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "exports": {
+    "./types": "./library.d.ts",
+    ".": "./lib/index.js",
     "./package.json": {
-      
-    },
-    "./types": "./lib/index.d.ts",
-    ".": "./lib/index.js"
+      "import": "./package.json",
+      "require": null
+    }
   },
   "scripts": {
     "build": "rollup -c",
