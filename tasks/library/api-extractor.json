@@ -1,18 +1,20 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
   "mainEntryPointFilePath": "./lib/index.d.ts",
-  "bundledPackages": [],
-  "apiReport": {
-    "enabled": true
-  },
-  "docModel": {
-    "enabled": true
-  },
   "dtsRollup": {
     "enabled": true,
-    "publicTrimmedFilePath": "./lib/index.d.ts"
+    "untrimmedFilePath": "./library.d.ts"
+  },
+  "compiler": {
+    "tsconfigFilePath": "./tsconfig.json"
+  },
+  "apiReport": {
+    "enabled": false
+  },
+  "docModel": {
+    "enabled": false
   },
   "tsdocMetadata": {
-    "enabled": true
+    "enabled": false
   }
 }
