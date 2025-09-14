@@ -5,11 +5,18 @@ const {
 const mfConfig = require("./module-federation.config");
 
 module.exports = {
-  entry: "./src/index.jsx",
+  entry: "./src/bootstrap.js",
   mode: "development",
   devtool: false,
   output: {
-    publicPath: "http://localhost:3001/",
+    publicPath: "http://localhost:3002/",
+  },
+  devServer: {
+    port: 3002,
+    headers: {
+      "access-control-allow-origin": "*",
+      "access-control-allow-methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+    },
   },
   resolve: {
     extensions: ['.js', '.jsx']
@@ -31,7 +38,7 @@ module.exports = {
             jsc: {
               parser: {
                 syntax: "ecmascript",
-                tsx: true,
+                jsx: true,
               },
               transform: {
                 react: {

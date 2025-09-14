@@ -1,7 +1,7 @@
 module.exports = {
   name: "host",
   remotes: {
-    components: "",
+    components: "components@http://localhost:3003/mf-manifest.json",
   },
   shared: {
     react: {
