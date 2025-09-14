@@ -3,7 +3,7 @@ import nodeResolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import html from "@rollup/plugin-html";
 import typescript from "@rollup/plugin-typescript";
-import replace from "@rollup/plugin-replace";
+import { createHash } from 'crypto';
 
 const htmlTemplate = ({ files }) => {
     const scripts = (files.js || [])
@@ -34,7 +34,9 @@ export default {
     output: {
         dir: "dist/rollup",
         format: "esm",
-        assetFileNames: "[name][extname]",
+        entryFileNames: '[name].js',
+        chunkFileNames: '[name].js',
+        assetFileNames: '[name].[ext]',
         sourcemap: 'hidden',
     },
     plugins: [
@@ -58,5 +60,43 @@ export default {
                 .replace(/\bprocess\.env\b/g, '({ NODE_ENV: "production" })');
             }
         },
+        pluginRenameFiles(),
     ],
+};
+
+function toBase64URL(buffer) {
+  return buffer
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+}
+
+function pluginRenameFiles() {
+    return {
+        name: 'rename-files-with-hash',
+        async generateBundle(options, bundle) {
+            for (const [fileName, chunk] of Object.entries(bundle)) {
+                if (chunk.type === 'chunk') {
+                    const code = chunk.code;
+
+                    // Считаем хеш от содержимого
+                    const hash = createHash('sha256').update(code).digest();
+                    const shortHash = toBase64URL(hash).slice(0, 8);
+
+                    // Получаем базовое имя без расширения
+                    const name = fileName.replace(/\.\w+$/, '').toLowerCase(); // -> 'index', 'main'
+
+                    // Определяем расширение
+                    const ext = fileName.split('.').pop(); // -> 'js'
+
+                    // Новое имя: [name]_[hash:8].[ext]
+                    const newName = `${name}_${shortHash}.${ext}`;
+
+                    // Переименовываем файл
+                    chunk.fileName = newName;
+                }
+            }
+        },
+    }
 };
