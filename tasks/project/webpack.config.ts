@@ -3,6 +3,15 @@ import path from "node:path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import rsdoctor from "@rsdoctor/webpack-plugin";
+// const { createHash } = require('crypto');
+
+// function toBase64URL(buffer) {
+//   return buffer
+//     .toString('base64')
+//     .replace(/\+/g, '-')
+//     .replace(/\//g, '_')
+//     .replace(/=+$/, '');
+// }
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -19,6 +28,15 @@ const config: Configuration = {
     output: {
         path: path.resolve("./dist/webpack"),
         publicPath: '/webpack/',
+        filename: (pathData) => {
+            const name = pathData.chunk?.name;
+            // В production mode Webpack уже вычислил контент — можно прочитать из compilation?
+            // Но на этом этапе контента ещё нет → используем contenthash
+            return `${name}_[contenthash:8].js`;
+        },
+        chunkFilename: '[name]_[contenthash:8].js',
+        assetModuleFilename: '[name]_[hash:8][ext]',
+        clean: true,
     },
     devtool: 'hidden-source-map',
     mode: isProduction ? "production" : "development",
