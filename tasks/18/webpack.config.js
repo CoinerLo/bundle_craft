@@ -17,9 +17,4 @@ export default {
             navigateFallback: '/template.html',
         }),
     ],
-    // module: {
-    //     rules: [
-    //         { test: /\.(html)$/, use: ['html-loader'] },
-    //     ],
-    // },
 };
