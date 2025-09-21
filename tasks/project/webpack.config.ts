@@ -1,4 +1,4 @@
-import { Configuration } from "webpack";
+import { Compiler, Configuration } from "webpack";
 import path from "node:path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
@@ -8,11 +8,47 @@ const isProduction = process.env.NODE_ENV === "production";
 
 const templateContent = `
 <html>
+    <head>
+        <meta property="csp-nonce" nonce="{{NONCE_VALUE}}">
+    </head>
     <body>
         <div id="root"></div>
     </body>
 </html>
 `;
+
+class AddNoncePlugin {
+  apply(compiler: Compiler) {
+    compiler.hooks.compilation.tap('AddNoncePlugin', (compilation) => {
+      HtmlWebpackPlugin.getHooks(compilation).alterAssetTags.tapAsync(
+        'AddNoncePlugin',
+        (data, cb) => {
+          const nonce = data.plugin.options?.nonce;
+          if (!nonce) {
+            cb(null, data);
+            return;
+          }
+
+          data.assetTags.scripts.forEach(tag => {
+            if (tag.tagName === 'script') {
+              tag.attributes = tag.attributes || {};
+              tag.attributes.nonce = nonce;
+            }
+          });
+
+          data.assetTags.styles.forEach(tag => {
+            if (tag.tagName === 'link' || tag.tagName === 'style') {
+              tag.attributes = tag.attributes || {};
+              tag.attributes.nonce = nonce;
+            }
+          });
+
+          cb(null, data);
+        }
+      );
+    });
+  }
+}
 
 const config: Configuration = {
     entry: "./src/index.tsx",
@@ -50,9 +86,9 @@ const config: Configuration = {
                             "tsx": true
                             },
                             "transform": {
-                            "react": {
-                                "runtime": "automatic"
-                            }
+                                "react": {
+                                    "runtime": "automatic"
+                                }
                             }
                         },
                         "module": {
@@ -67,8 +103,11 @@ const config: Configuration = {
     plugins: [
         new HtmlWebpackPlugin({
             templateContent,
+            inject: true,
+            nonce: '{{NONCE_VALUE}}',
         }),
         new rsdoctor.RsdoctorWebpackMultiplePlugin(),
+        new AddNoncePlugin(),
     ],
     experiments: {
         css: true
