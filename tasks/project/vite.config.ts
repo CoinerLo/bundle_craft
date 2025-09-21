@@ -26,7 +26,11 @@ export default defineConfig({
             "store/*": "./src/store/*",
         },
     },
-    plugins: [tsconfigPaths(), pluginRenameFiles()],
+    html: {
+        cspNonce: '{{NONCE_VALUE}}'
+    },
+    // plugins: [tsconfigPaths(), pluginRenameFiles()],
+    plugins: [tsconfigPaths()],
 })
 
 function toBase64URL(buffer) {

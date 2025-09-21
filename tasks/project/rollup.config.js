@@ -7,11 +7,11 @@ import { createHash } from 'crypto';
 
 const htmlTemplate = ({ files }) => {
     const scripts = (files.js || [])
-        .map(file => `<script type="module" src="/rollup/${file.name}.js"></script>`)
+        .map(file => `<script type="module" src="/rollup/${file.name}.js" nonce="{{NONCE_VALUE}}"></script>`)
         .join('\n  ');
 
     const styles = (files.css || [])
-        .map(file => `<link rel="stylesheet" href="/rollup/${file.name}">`)
+        .map(file => `<link rel="stylesheet" href="/rollup/${file.name}" nonce="{{NONCE_VALUE}}">`)
         .join('\n  ');
     return `
 <!DOCTYPE html>
@@ -19,6 +19,7 @@ const htmlTemplate = ({ files }) => {
     <head>
         <meta charset="UTF-8">
         <title>Document</title>
+        <meta property="csp-nonce" nonce="{{NONCE_VALUE}}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         ${styles}
     </head>
@@ -50,26 +51,26 @@ export default {
         }),
         html({
             template: htmlTemplate,
-            publicPath: '/rollup/'
+            publicPath: '/rollup/',
         }),
         {
             name: 'define',
             transform(code) {
                 return code
-                .replace(/\bprocess\.env\.NODE_ENV\b/g, '"production"')
-                .replace(/\bprocess\.env\b/g, '({ NODE_ENV: "production" })');
+                    .replace(/\bprocess\.env\.NODE_ENV\b/g, '"production"')
+                    .replace(/\bprocess\.env\b/g, '({ NODE_ENV: "production" })');
             }
         },
-        pluginRenameFiles(),
+        // pluginRenameFiles(),
     ],
 };
 
 function toBase64URL(buffer) {
-  return buffer
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+    return buffer
+        .toString('base64')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
 }
 
 function pluginRenameFiles() {
