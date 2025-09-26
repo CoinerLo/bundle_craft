@@ -4,6 +4,7 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
 const config = {
     mode: 'development',
+    devtool: false,
     entry: './src/index.js',
     output: {
         path: path.resolve(import.meta.dirname, 'dist/webpack'),
@@ -19,29 +20,23 @@ const config = {
                     {
                         loader: 'css-loader',
                         options: {
-                            esModule: false,
                             modules: {
+                                namedExport: false,
                                 localIdentName: '[path][name]_[hash:base64:5]',
                             }
                         }
                     },
                 ]
             },
-            {
-                test: /\.css$/i,
-                exclude: /\.module\.css$/,
-                use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader']
-            }
         ]
     },
     plugins: [
+        new HtmlWebpackPlugin({
+            template: './template.html'
+        }),
         new MiniCssExtractPlugin({
             filename: 'styles.css'
         }),
-        new HtmlWebpackPlugin({
-            template: './index.html',
-            inject: 'body'
-        })
     ]
 };
 
