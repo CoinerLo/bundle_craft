@@ -55,7 +55,7 @@ const config: Configuration = {
     output: {
         path: path.resolve("./dist/webpack"),
         publicPath: '/webpack/',
-        filename: '[name_[contenthash:8].js',
+        filename: '[name]_[contenthash:8].js',
         chunkFilename: '[name]_[contenthash:8].js',
         assetModuleFilename: '[name]_[hash:8][ext]',
         clean: true,
